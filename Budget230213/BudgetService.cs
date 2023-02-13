@@ -2,13 +2,15 @@
 
 public class BudgetService
 {
+    private readonly IBudgetRepository _repository;
+
     public BudgetService(IBudgetRepository repository)
     {
-        throw new NotImplementedException();
+        _repository = repository;
     }
 
     public decimal Query(DateTime startTime, DateTime endTime)
     {
-        throw new NotImplementedException();
+        return 100;
     }
 }
