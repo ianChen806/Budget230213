@@ -31,7 +31,7 @@ public class BudgetService
 
     private Budget QueryBudget(DateTime date)
     {
-        return _repository.GetAll().First(r => r.YearMonth == date.ToString("yyyyMM"));
+        return _repository.GetAll().FirstOrDefault(r => r.YearMonth == date.ToString("yyyyMM")) ?? new Budget();
     }
 
     private List<Period> SplitPeriod(DateTime startTime, DateTime endTime)
