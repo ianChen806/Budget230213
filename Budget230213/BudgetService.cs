@@ -9,8 +9,11 @@ public class BudgetService
         _repository = repository;
     }
 
-    public decimal Query(DateTime startTime, DateTime endTime)
+    public double Query(DateTime startTime, DateTime endTime)
     {
-        return 100;
+        var totalDays = (endTime - startTime).TotalDays + 1;
+        var daysInMonth = DateTime.DaysInMonth(startTime.Year, startTime.Month);
+        var budget = _repository.GetAll().First(r => r.YearMonth == startTime.ToString("yyyyMM"));
+        return (budget.Amount / daysInMonth) * totalDays;
     }
 }

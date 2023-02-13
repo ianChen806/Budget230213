@@ -5,6 +5,7 @@ namespace Budget230213;
 public class BudgetServiceTest
 {
     private readonly IBudgetRepository _repository;
+
     private readonly BudgetService _target;
 
     public BudgetServiceTest()
@@ -28,6 +29,23 @@ public class BudgetServiceTest
             new DateTime(2023, 2, 2),
             new DateTime(2023, 2, 2));
         Assert.Equal(100, actual);
+    }
+
+    [Fact]
+    public void OneMonth()
+    {
+        _repository.GetAll().Returns(new List<Budget>
+        {
+            new()
+            {
+                YearMonth = "202311",
+                Amount = 3000
+            }
+        });
+        var actual = _target.Query(
+            new DateTime(2023, 11, 28),
+            new DateTime(2023, 11, 30));
+        Assert.Equal(300, actual);
     }
 
     [Fact]
@@ -165,22 +183,5 @@ public class BudgetServiceTest
             new DateTime(2023, 11, 28),
             new DateTime(2024, 1, 2));
         Assert.Equal(302, actual);
-    }
-
-    [Fact]
-    public void OneMonth()
-    {
-        _repository.GetAll().Returns(new List<Budget>
-        {
-            new()
-            {
-                YearMonth = "202311",
-                Amount = 3000
-            }
-        });
-        var actual = _target.Query(
-            new DateTime(2023, 11, 28),
-            new DateTime(2023, 11, 30));
-        Assert.Equal(300, actual);
     }
 }
