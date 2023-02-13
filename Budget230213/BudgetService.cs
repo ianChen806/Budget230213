@@ -34,18 +34,23 @@ public class BudgetService
         return _repository.GetAll().FirstOrDefault(r => r.YearMonth == date.ToString("yyyyMM")) ?? new Budget();
     }
 
-    private List<Period> SplitPeriod(DateTime startTime, DateTime endTime)
+    private IEnumerable<Period> SplitPeriod(DateTime startTime, DateTime endTime)
     {
-        var lastDay = new DateTime(startTime.Year, startTime.Month, startTime.DaysInMonth());
-        if (endTime <= lastDay)
+        var current = startTime;
+        do
         {
-            return new List<Period> { new(startTime, endTime) };
-        }
+            var lastDay = new DateTime(current.Year, current.Month, current.DaysInMonth());
+            if (endTime <= lastDay)
+            {
+                yield return new Period(current, endTime);
+                break;
+            }
+            else
+            {
+                yield return new Period(current, lastDay);
+            }
 
-        return new List<Period>
-        {
-            new(startTime, lastDay),
-            new(new DateTime(endTime.Year, endTime.Month, 1), endTime)
-        };
+            current = new DateTime(current.Year, current.Month, 1).AddMonths(1);
+        } while (true);
     }
 }
