@@ -2,7 +2,7 @@
 
 public class Budget
 {
-    public int Amount { get; set; }
+    public decimal Amount { get; set; }
 
-    public string YearMonth { get; set; }
+    public string YearMonth { get; set; } = null!;
 }

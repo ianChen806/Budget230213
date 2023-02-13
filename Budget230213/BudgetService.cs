@@ -1,5 +1,13 @@
 ﻿namespace Budget230213;
 
+public static class DateTimeExtension
+{
+    public static int DaysInMonth(this DateTime date)
+    {
+        return DateTime.DaysInMonth(date.Year, date.Month);
+    }
+}
+
 public class BudgetService
 {
     private readonly IBudgetRepository _repository;
@@ -9,11 +17,15 @@ public class BudgetService
         _repository = repository;
     }
 
-    public double Query(DateTime startTime, DateTime endTime)
+    public decimal Query(DateTime startTime, DateTime endTime)
     {
-        var totalDays = (endTime - startTime).TotalDays + 1;
-        var daysInMonth = DateTime.DaysInMonth(startTime.Year, startTime.Month);
-        var budget = _repository.GetAll().First(r => r.YearMonth == startTime.ToString("yyyyMM"));
-        return (budget.Amount / daysInMonth) * totalDays;
+        var period = new Period(startTime, endTime);
+        var budget = QueryBudget(startTime);
+        return budget.Amount / startTime.DaysInMonth() * (decimal)period.TotalDays();
+    }
+
+    private Budget QueryBudget(DateTime date)
+    {
+        return _repository.GetAll().First(r => r.YearMonth == date.ToString("yyyyMM"));
     }
 }
