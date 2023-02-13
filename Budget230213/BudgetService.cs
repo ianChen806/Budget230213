@@ -19,13 +19,33 @@ public class BudgetService
 
     public decimal Query(DateTime startTime, DateTime endTime)
     {
-        var period = new Period(startTime, endTime);
-        var budget = QueryBudget(startTime);
-        return budget.Amount / startTime.DaysInMonth() * (decimal)period.TotalDays();
+        var periods = SplitPeriod(startTime, endTime);
+        return periods.Select(CalBudget).Sum();
+    }
+
+    private decimal CalBudget(Period period)
+    {
+        var budget = QueryBudget(period.Date);
+        return budget.Amount / period.Date.DaysInMonth() * (decimal)period.TotalDays();
     }
 
     private Budget QueryBudget(DateTime date)
     {
         return _repository.GetAll().First(r => r.YearMonth == date.ToString("yyyyMM"));
+    }
+
+    private List<Period> SplitPeriod(DateTime startTime, DateTime endTime)
+    {
+        var lastDay = new DateTime(startTime.Year, startTime.Month, startTime.DaysInMonth());
+        if (endTime <= lastDay)
+        {
+            return new List<Period> { new(startTime, endTime) };
+        }
+
+        return new List<Period>
+        {
+            new(startTime, lastDay),
+            new(new DateTime(endTime.Year, endTime.Month, 1), endTime)
+        };
     }
 }

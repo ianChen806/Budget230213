@@ -2,8 +2,8 @@
 
 public class Period
 {
-    private readonly DateTime _startTime;
     private readonly DateTime _endTime;
+    private readonly DateTime _startTime;
 
     public Period(DateTime startTime, DateTime endTime)
     {
@@ -11,7 +11,9 @@ public class Period
         _endTime = endTime;
     }
 
-    public  double TotalDays()
+    public DateTime Date => _startTime.Date;
+
+    public double TotalDays()
     {
         return (_endTime - _startTime).TotalDays + 1;
     }
